@@ -1,6 +1,8 @@
 #include "SchnorrSignature.h"
 #include <iostream>
 
+using namespace std;
+
 SchnorrSignature::SchnorrSignature() {
     keyPair = nullptr;
 }
@@ -14,12 +16,12 @@ SchnorrSignature::~SchnorrSignature() {
 EC_KEY *SchnorrSignature::generateKeyPair() {
     EC_KEY *key = EC_KEY_new_by_curve_name(NID_secp256k1);
     if (!key) {
-        std::cerr << "Error generating key pair." << std::endl;
+        cerr << "Error generating key pair." << endl;
         return nullptr;
     }
 
     if (!EC_KEY_generate_key(key)) {
-        std::cerr << "Error generating key pair." << std::endl;
+        cerr << "Error generating key pair." << endl;
         EC_KEY_free(key);
         return nullptr;
     }
@@ -28,9 +30,9 @@ EC_KEY *SchnorrSignature::generateKeyPair() {
     return key;
 }
 
-ECDSA_SIG *SchnorrSignature::sign(const std::string &message, EC_KEY *privateKey) {
+ECDSA_SIG *SchnorrSignature::sign(const string &message, EC_KEY *privateKey) {
     if (!privateKey) {
-        std::cerr << "Private key not provided." << std::endl;
+        cerr << "Private key not provided." << endl;
         return nullptr;
     }
 
@@ -42,9 +44,9 @@ ECDSA_SIG *SchnorrSignature::sign(const std::string &message, EC_KEY *privateKey
     return signature;
 }
 
-bool SchnorrSignature::verify(const std::string &message, ECDSA_SIG *signature, EC_KEY *publicKey) {
+bool SchnorrSignature::verify(const string &message, ECDSA_SIG *signature, EC_KEY *publicKey) {
     if (!signature || !publicKey) {
-        std::cerr << "Invalid signature or public key." << std::endl;
+        cerr << "Invalid signature or public key." << endl;
         return false;
     }
 
@@ -56,18 +58,18 @@ bool SchnorrSignature::verify(const std::string &message, ECDSA_SIG *signature, 
 
 void SchnorrSignature::printKeyPair() const {
     if (keyPair) {
-        std::cout << "Public Key: " << EC_POINT_point2hex(EC_KEY_get0_group(keyPair), EC_KEY_get0_public_key(keyPair),
-                                                          POINT_CONVERSION_UNCOMPRESSED, nullptr) << std::endl;
+        cout << "Public Key: " << EC_POINT_point2hex(EC_KEY_get0_group(keyPair), EC_KEY_get0_public_key(keyPair),
+                                                          POINT_CONVERSION_UNCOMPRESSED, nullptr) << endl;
     } else {
-        std::cerr << "Key pair is null." << std::endl;
+        cerr << "Key pair is null." << endl;
     }
 }
 
 void SchnorrSignature::printSignature(ECDSA_SIG *signature) const {
     if (signature) {
-        std::cout << "Signature: r = " << BN_bn2hex(ECDSA_SIG_get0_r(signature)) << ", s = "
-                  << BN_bn2hex(ECDSA_SIG_get0_s(signature)) << std::endl;
+        cout << "r = " << BN_bn2hex(ECDSA_SIG_get0_r(signature)) << "\ns = "
+                  << BN_bn2hex(ECDSA_SIG_get0_s(signature)) << endl;
     } else {
-        std::cerr << "Signature is null." << std::endl;
+        cerr << "Signature is null." << endl;
     }
 }

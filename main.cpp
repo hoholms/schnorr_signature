@@ -1,57 +1,55 @@
 #include "SchnorrSignature.h"
 #include <iostream>
 
+using namespace std;
+
 void printSeparator() {
-    std::cout << "--------------------------------------------" << std::endl;
+    cout << "--------------------------------------------" << endl;
 }
 
 int main() {
     SchnorrSignature schnorr;
 
     // Генерация ключевой пары
-    std::cout << "Generating key pair..." << std::endl;
+    cout << "Generating key pair..." << endl;
     EC_KEY *keyPair = schnorr.generateKeyPair();
     if (!keyPair) {
-        std::cerr << "Error generating key pair." << std::endl;
+        cerr << "Error generating key pair." << endl;
         return 1;
     }
-    std::cout << "Key pair generated successfully." << std::endl;
+    cout << "Key pair generated successfully." << endl;
     printSeparator();
 
     // Подпись
-    std::string message = "Hello, Schnorr!";
-    std::cout << "Signing message: " << message << "..." << std::endl;
+    string message = "Hello, Schnorr!";
+    cout << "Signing message: " << message << "..." << endl;
     ECDSA_SIG *signature = schnorr.sign(message, keyPair);
     if (!signature) {
-        std::cerr << "Error creating signature." << std::endl;
+        cerr << "Error creating signature." << endl;
         EC_KEY_free(keyPair);
         return 1;
     }
-    std::cout << "Message signed successfully." << std::endl;
+    cout << "Message signed successfully." << endl;
     printSeparator();
 
     // Верификация
-    std::cout << "Verifying signature..." << std::endl;
+    cout << "Verifying signature..." << endl;
     bool verified = schnorr.verify(message, signature, keyPair);
     if (verified) {
-        std::cout << "Signature verification: Passed" << std::endl;
+        cout << "Signature verification: Passed" << endl;
     } else {
-        std::cerr << "Signature verification: Failed" << std::endl;
+        cerr << "Signature verification: Failed" << endl;
     }
     printSeparator();
 
     // Вывод информации о ключах и подписи
-    std::cout << "Key Pair Information:" << std::endl;
+    cout << "Key Pair Information:" << endl;
     schnorr.printKeyPair();
     printSeparator();
 
-    std::cout << "Signature Information:" << std::endl;
+    cout << "Signature Information:" << endl;
     schnorr.printSignature(signature);
     printSeparator();
-
-    // Очистка ресурсов
-    ECDSA_SIG_free(signature);
-    EC_KEY_free(keyPair);
 
     return verified ? 0 : 1;
 }
